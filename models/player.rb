@@ -16,7 +16,7 @@ class Player
   def cards_to_s
     cards = []
     @cards.each do |card|
-        cards << "#{card.value.to_s} #{card.suit}"
+      cards << "#{card.value} #{card.suit}"
     end
     cards
   end
