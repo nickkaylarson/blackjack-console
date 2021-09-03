@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Player
-  attr_accessor :points
+  attr_accessor :points, :bank
   attr_reader :name, :cards
 
   def initialize(name)
@@ -17,8 +17,8 @@ class Player
 
   def cards_to_s
     cards = []
-    @cards.each do |card|
-      cards << "#{card.value} #{card.suit}"
+    @cards.each_with_index do |card, index|
+      cards << "Card ##{index + 1}: #{card.value} #{card.suit}"
     end
     cards
   end
