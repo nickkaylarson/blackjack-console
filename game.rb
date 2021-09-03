@@ -6,10 +6,10 @@ require_relative('./models/player')
 require_relative('./models/card')
 
 class Game
-def initialize
+  def initialize
     @players = []
     @bank = 0
-end
+  end
 
   def start
     @prompt = TTY::Prompt.new(track_history: false)
@@ -30,12 +30,17 @@ end
     player
   end
 
-
+  def make_bid
+    bid = 10
+    @bank += bid * @players.size
+    @players.each { |player| player.bank -= bid }
+  end
 
   def game_loop
     loop do
-    @players << create_dealer
-    @players << create_player
+      @players << create_dealer
+      @players << create_player
+      make_bid
     end
   end
 end
