@@ -53,10 +53,11 @@ class Game
     end
   end
 
-  def print_cards_and_points(player)
+  def print_player(player)
     p "Player name: #{player.name}"
     player.cards_to_s.each { |card| p card }
     p "Points: #{player.points}"
+    p "Bank: #{player.bank}"
     puts "\n"
   end
 
@@ -66,57 +67,65 @@ class Game
 
   def dealer_move
     if @players.first.cards.size < 3
-      if @players.first.points >= 17
-        make_choice
-      else
+      if @players.first.points <= 17
         add_card(@players.first)
         calculate_points
+      else
+        p "#{@players.first.name} skip move"
       end
-    else
-      make_choice
     end
   end
 
   def show_cards
-    print_cards_and_points(@players.first)
-    print_cards_and_points(@players.last)
+    print_player(@players.first)
+    print_player(@players.last)
   end
 
-  def choose_winner; end
+  def start_new_game
 
-  def make_choice
-    case @prompt.select('Make a choice: ', ['Skip move', 'Add a card', 'Show cards'])
-    when 'Skip move'
-      dealer_move
-    when 'Add a card'
-      add_card(@players.last)
-      dealer_move
-      calculate_points
-    when 'Show cards'
-      show_cards
+    case @prompt.select('Start new game? : ', %w[Yes No])
+    when 'Yes'
+     
+    when 'No'
+      
+    
     end
   end
+
+  def choose_winner
+    if @players.first.points > @players.first.points
+        p "#{@players.first.points} won"
+    else
+        p "#{@players.last.points} won"
+    end
+    start_new_game
+end
 
   def game_loop
     @players << create_dealer
     @players << create_player
     make_bid
     calculate_points
+
     loop do
       if @players.last.cards.size == 3
         show_cards
+        choose_winner
         break
       else
-        print_cards_and_points(@players.last)
+        print_player(@players.last)
 
         case @prompt.select('Make a choice: ', ['Skip move', 'Add a card', 'Show cards'])
         when 'Skip move'
           dealer_move
+          calculate_points
         when 'Add a card'
           add_card(@players.last)
           dealer_move
+          calculate_points
         when 'Show cards'
           show_cards
+          choose_winner
           break
         end
       end
