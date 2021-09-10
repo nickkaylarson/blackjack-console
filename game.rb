@@ -52,22 +52,51 @@ class Game
     end
   end
 
-  def print_cards_and_points
-    @players.last.cards_to_s.each { |card| p card }
-    p "Points: #{@players.last.points}"
+  def print_cards_and_points(player)
+    playercards_to_s.each { |card| p card }
+    p "Points: #{player.points}"
   end
 
-  def make_choise; end
+  def dealer_move; end
+
+  def skip_move; end
+
+  def add_card; end
+
+  def show_cards
+    print_cards_and_points(@players.first)
+    print_cards_and_points(@players.last)
+end
+
+def choose_winner
+end
+
+  def make_choice
+    case @prompt.select('Make a choice: ', ['Skip move', 'Add a card', 'Show cards'])
+    when 'Skip move'
+      skip_move
+      dealer_move
+    when 'Add a card'
+      add_card
+      dealer_move
+    when 'Show cards'
+      show_cards
+    end
+  end
 
   def game_loop
     loop do
+        if @players.first.cards.size == 3 || @players.last.cards.size == 3
+            show_cards
+            break
+        else
       @players << create_dealer
       @players << create_player
       make_bid
       calculate_points
-      print_cards_and_points
-      #   make_choise
-
+      print_cards_and_points(@players.last)
+      make_choice
+        end
       # binding.irb
     end
   end
