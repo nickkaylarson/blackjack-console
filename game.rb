@@ -40,6 +40,7 @@ class Game
 
   def calculate_points
     @players.each do |player|
+      player.points = 0
       player.cards.each do |card|
         player.points += if card.value.to_i.zero?
                            card.value == 'Ace' ? 1 : 10
@@ -53,51 +54,72 @@ class Game
   end
 
   def print_cards_and_points(player)
-    playercards_to_s.each { |card| p card }
+    p "Player name: #{player.name}"
+    player.cards_to_s.each { |card| p card }
     p "Points: #{player.points}"
+    puts "\n"
   end
 
-  def dealer_move; end
+  def add_card(player)
+    player.cards = Card.new
+  end
 
-  def skip_move; end
-
-  def add_card; end
+  def dealer_move
+    if @players.first.cards.size < 3
+      if @players.first.points >= 17
+        make_choice
+      else
+        add_card(@players.first)
+        calculate_points
+      end
+    else
+      make_choice
+    end
+  end
 
   def show_cards
     print_cards_and_points(@players.first)
     print_cards_and_points(@players.last)
-end
+  end
 
-def choose_winner
-end
+  def choose_winner; end
 
   def make_choice
     case @prompt.select('Make a choice: ', ['Skip move', 'Add a card', 'Show cards'])
     when 'Skip move'
-      skip_move
       dealer_move
     when 'Add a card'
-      add_card
+      add_card(@players.last)
       dealer_move
+      calculate_points
     when 'Show cards'
       show_cards
     end
   end
 
   def game_loop
+    @players << create_dealer
+    @players << create_player
+    make_bid
+    calculate_points
     loop do
-        if @players.first.cards.size == 3 || @players.last.cards.size == 3
-            show_cards
-            break
-        else
-      @players << create_dealer
-      @players << create_player
-      make_bid
-      calculate_points
-      print_cards_and_points(@players.last)
-      make_choice
+      if @players.last.cards.size == 3
+        show_cards
+        break
+      else
+        print_cards_and_points(@players.last)
+
+        case @prompt.select('Make a choice: ', ['Skip move', 'Add a card', 'Show cards'])
+        when 'Skip move'
+          dealer_move
+        when 'Add a card'
+          add_card(@players.last)
+          dealer_move
+        when 'Show cards'
+          show_cards
+          break
         end
-      # binding.irb
+      end
     end
   end
 end
