@@ -45,7 +45,6 @@ class Game
                          else
                            card.value.to_i
                          end
-
         player.points += 10 if card.value == 'Ace' && (player.points + 10) <= 21
       end
     end
@@ -109,22 +108,31 @@ class Game
     check_bank
   end
 
-  def game_loop
+  def clear_stats
     @bank = 0
     @players.each { |player| player.cards.clear }
+  end
 
+  def make_first_move
     2.times { @players.each { |player| player.cards = Card.new } }
     make_bid
     calculate_points
+  end
 
+  def end_game
+    show_cards
+    choose_winner
+  end
+
+  def game_loop
+    clear_stats
+    make_first_move
     loop do
-      if @players.last.cards.size == 3
-        show_cards
-        choose_winner
+      if @players.last.cards.size == 3 || @players.first.cards.size == 3
+        end_game
         break
       else
         print_player(@players.last)
-
         case @prompt.select('Make a choice: ', ['Skip move', 'Add a card', 'Show cards'])
         when 'Skip move'
           dealer_move
@@ -134,8 +142,7 @@ class Game
           dealer_move
           calculate_points
         when 'Show cards'
-          show_cards
-          choose_winner
+          end_game
           break
         end
       end
