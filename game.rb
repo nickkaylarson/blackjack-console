@@ -15,20 +15,20 @@ class Game
 
   def start
     @prompt = TTY::Prompt.new(track_history: false)
+    @players << create_dealer
+    @players << create_player
     game_loop
   end
 
   private
 
   def create_dealer
-    dealer = Player.new('Dealer')
-    2.times { dealer.cards = Card.new }
+    dealer = Player.new('Dealer')    
     dealer
   end
 
   def create_player
-    player = Player.new(@prompt.ask('Enter your name:'))
-    2.times { player.cards = Card.new }
+    player = Player.new(@prompt.ask('Enter your name:'))  
     player
   end
 
@@ -73,6 +73,8 @@ class Game
       else
         p "#{@players.first.name} skip move"
       end
+    else
+      p "#{@players.first.name} skip move"
     end
   end
 
@@ -82,28 +84,35 @@ class Game
   end
 
   def start_new_game
-
     case @prompt.select('Start new game? : ', %w[Yes No])
     when 'Yes'
-     
+      game_loop
     when 'No'
-      
-    
+      exit
     end
   end
 
   def choose_winner
-    if @players.first.points > @players.first.points
-        p "#{@players.first.points} won"
+    if @players.first.points > @players.last.points && @players.first.points <= 21
+      p "#{@players.first.name} won"
+      @players.first.bank += @bank
     else
-        p "#{@players.last.points} won"
+      p "#{@players.last.name} won"
+      @players.last.bank += @bank
     end
-    start_new_game
-end
+
+    if @players.first.bank.positive? && @players.last.bank.positive?
+      start_new_game
+    else
+      exit
+    end
+  end
 
   def game_loop
-    @players << create_dealer
-    @players << create_player
+    @bank = 0
+    @players.each { |player| player.cards.clear}
+
+    2.times { @players.each { |player| player.cards = Card.new } }
     make_bid
     calculate_points
 
