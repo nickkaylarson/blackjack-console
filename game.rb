@@ -23,13 +23,11 @@ class Game
   private
 
   def create_dealer
-    dealer = Player.new('Dealer')    
-    dealer
+    Player.new('Dealer')
   end
 
   def create_player
-    player = Player.new(@prompt.ask('Enter your name:'))  
-    player
+    Player.new(@prompt.ask('Enter your name:'))
   end
 
   def make_bid
@@ -92,6 +90,14 @@ class Game
     end
   end
 
+  def check_bank
+    if @players.first.bank.positive? && @players.last.bank.positive?
+      start_new_game
+    else
+      exit
+    end
+  end
+
   def choose_winner
     if @players.first.points > @players.last.points && @players.first.points <= 21
       p "#{@players.first.name} won"
@@ -100,17 +106,12 @@ class Game
       p "#{@players.last.name} won"
       @players.last.bank += @bank
     end
-
-    if @players.first.bank.positive? && @players.last.bank.positive?
-      start_new_game
-    else
-      exit
-    end
+    check_bank
   end
 
   def game_loop
     @bank = 0
-    @players.each { |player| player.cards.clear}
+    @players.each { |player| player.cards.clear }
 
     2.times { @players.each { |player| player.cards = Card.new } }
     make_bid
