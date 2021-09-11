@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
+require_relative 'deck'
+
 class Card
-  SUIT = %w[♠ ♥ ♦ ♣].freeze
-
-  VALUE = (2...10).to_a + %w[Jack Queen King Ace]
-
-  attr_accessor :suit, :value
+  attr_reader :suit, :value
 
   def initialize
-    @suit = SUIT.sample
-    @value = VALUE.sample
+    @suit, @value = Deck.new.random_card
   end
 end
