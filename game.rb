@@ -38,15 +38,7 @@ class Game
 
   def calculate_points
     @players.each do |player|
-      player.hand.points = 0
-      player.hand.cards.each do |card|
-        player.hand.points += if card.value.to_i.zero?
-                           card.value == 'Ace' ? 1 : 10
-                         else
-                           card.value.to_i
-                         end
-        player.hand.points += 10 if card.value == 'Ace' && (player.hand.points + 10) <= 21
-      end
+      player.hand.calculate_points
     end
   end
 

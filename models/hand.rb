@@ -20,4 +20,16 @@ class Hand
     end
     cards
   end
+
+  def calculate_points
+    @points = 0
+    @cards.each do |card|
+      @points += if card.value.to_i.zero?
+                   card.value == 'Ace' ? 1 : 10
+                 else
+                   card.value.to_i
+                 end
+      @points += 10 if card.value == 'Ace' && (@points + 10) <= 21
+    end
+  end
 end
