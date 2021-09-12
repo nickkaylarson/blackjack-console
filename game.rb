@@ -38,33 +38,33 @@ class Game
 
   def calculate_points
     @players.each do |player|
-      player.points = 0
-      player.cards.each do |card|
-        player.points += if card.value.to_i.zero?
+      player.hand.points = 0
+      player.hand.cards.each do |card|
+        player.hand.points += if card.value.to_i.zero?
                            card.value == 'Ace' ? 1 : 10
                          else
                            card.value.to_i
                          end
-        player.points += 10 if card.value == 'Ace' && (player.points + 10) <= 21
+        player.hand.points += 10 if card.value == 'Ace' && (player.hand.points + 10) <= 21
       end
     end
   end
 
   def print_player(player)
     p "Player name: #{player.name}"
-    player.cards_to_s.each { |card| p card }
-    p "Points: #{player.points}"
+    player.hand.cards_to_s.each { |card| p card }
+    p "Points: #{player.hand.points}"
     p "Bank: #{player.bank}"
     puts "\n"
   end
 
   def add_card(player)
-    player.cards = Card.new
+    player.hand.cards = Card.new
   end
 
   def dealer_move
-    if @players.first.cards.size < 3
-      if @players.first.points <= 17
+    if @players.first.hand.cards.size < 3
+      if @players.first.hand.points <= 17
         add_card(@players.first)
         calculate_points
       else
@@ -98,10 +98,10 @@ class Game
   end
 
   def choose_winner
-    if @players.first.points > @players.last.points && @players.first.points <= 21
+    if @players.first.hand.points > @players.last.hand.points && @players.first.hand.points <= 21
       p "#{@players.first.name} won"
       @players.first.bank += @bank
-    elsif @players.first.points == @players.last.points
+    elsif @players.first.hand.points == @players.last.hand.points
       p 'DRAW!'
       @players.first.bank += @bank / 2
       @players.last.bank += @bank / 2
@@ -114,11 +114,11 @@ class Game
 
   def clear_stats
     @bank = 0
-    @players.each { |player| player.cards.clear }
+    @players.each { |player| player.hand.cards.clear }
   end
 
   def make_first_move
-    2.times { @players.each { |player| player.cards = Card.new } }
+    2.times { @players.each { |player| player.hand.cards = Card.new } }
     make_bid
     calculate_points
   end
@@ -132,7 +132,7 @@ class Game
     clear_stats
     make_first_move
     loop do
-      if @players.last.cards.size == 3 || @players.first.cards.size == 3
+      if @players.last.hand.cards.size == 3 || @players.first.hand.cards.size == 3
         end_game
         break
       else
