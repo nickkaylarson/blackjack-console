@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require 'tty-prompt'
-
 require_relative('./models/player')
 require_relative('./models/card')
+require_relative 'interface'
 
 class Game
   attr_reader :bank
@@ -11,23 +10,22 @@ class Game
   def initialize
     @players = []
     @bank = 0
+    @interface = Interface.new
   end
 
   def start
-    @prompt = TTY::Prompt.new(track_history: false)
-    @players << create_dealer
-    @players << create_player
+    2.times { @players << create_player }
     game_loop
   end
 
   private
 
-  def create_dealer
-    Player.new('Dealer')
-  end
-
   def create_player
-    Player.new(@prompt.ask('Enter your name:'))
+    if @players.size.zero?
+      Player.new('Dealer')
+    else
+      Player.new(@interface.enter_name)
+    end
   end
 
   def make_bid
@@ -43,11 +41,11 @@ class Game
   end
 
   def print_player(player)
-    p "Player name: #{player.name}"
-    player.hand.cards_to_s.each { |card| p card }
-    p "Points: #{player.hand.points}"
-    p "Bank: #{player.bank}"
-    puts "\n"
+    @interface.print_message("Player name: #{player.name}")
+    player.hand.cards_to_s.each { |card| @interface.print_message(card) }
+    @interface.print_message("Points: #{player.hand.points}")
+    @interface.print_message("Bank: #{player.bank}")
+    @interface.print_separator
   end
 
   def add_card(player)
@@ -60,10 +58,10 @@ class Game
         add_card(@players.first)
         calculate_points
       else
-        p "#{@players.first.name} skip move"
+        @interface.print_message("#{@players.first.name} skip move")
       end
     else
-      p "#{@players.first.name} skip move"
+      @interface.print_message("#{@players.first.name} skip move")
     end
   end
 
@@ -72,18 +70,9 @@ class Game
     print_player(@players.last)
   end
 
-  def start_new_game
-    case @prompt.select('Start new game? : ', %w[Yes No])
-    when 'Yes'
-      game_loop
-    when 'No'
-      exit
-    end
-  end
-
   def check_bank
     if @players.first.bank.positive? && @players.last.bank.positive?
-      start_new_game
+      @interface.start_new_game? ? game_loop : exit
     else
       exit
     end
@@ -91,14 +80,14 @@ class Game
 
   def choose_winner
     if @players.first.hand.points > @players.last.hand.points && @players.first.hand.points <= 21
-      p "#{@players.first.name} won"
+      @interface.print_message("#{@players.first.name} won")
       @players.first.bank += @bank
     elsif @players.first.hand.points == @players.last.hand.points
-      p 'DRAW!'
+      @interface.print_message('DRAW!')
       @players.first.bank += @bank / 2
       @players.last.bank += @bank / 2
     else
-      p "#{@players.last.name} won"
+      @interface.print_message("#{@players.last.name} won")
       @players.last.bank += @bank
     end
     check_bank
@@ -110,7 +99,7 @@ class Game
   end
 
   def make_first_move
-    2.times { @players.each { |player| player.hand.cards = Card.new } }
+    2.times { @players.each { |player| add_card(player) } }
     make_bid
     calculate_points
   end
@@ -129,7 +118,7 @@ class Game
         break
       else
         print_player(@players.last)
-        case @prompt.select('Make a choice: ', ['Skip move', 'Add a card', 'Show cards'])
+        case @interface.player_make_choise
         when 'Skip move'
           dealer_move
           calculate_points
