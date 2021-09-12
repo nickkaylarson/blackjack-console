@@ -1,25 +1,14 @@
 # frozen_string_literal: true
 
+require_relative 'hand'
+
 class Player
-  attr_accessor :points, :bank
-  attr_reader :name, :cards
+  attr_accessor :bank
+  attr_reader :name, :hand
 
   def initialize(name)
     @name = name
-    @cards = []
     @bank = 100
-    @points = 0
-  end
-
-  def cards=(card)
-    @cards << card
-  end
-
-  def cards_to_s
-    cards = []
-    @cards.each_with_index do |card, index|
-      cards << "Card ##{index + 1}: #{card.value} #{card.suit}"
-    end
-    cards
+    @hand = Hand.new
   end
 end
