@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative('./models/player')
-require_relative('./models/card')
+require_relative './models/player'
+require_relative './models/card'
 require_relative 'interface'
 
 class Game
