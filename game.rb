@@ -102,9 +102,9 @@ class Game
       p "#{@players.first.name} won"
       @players.first.bank += @bank
     elsif @players.first.points == @players.last.points
-        p "DRAW!"
-        @players.first.bank += @bank / 2
-        @players.last.bank += @bank / 2
+      p 'DRAW!'
+      @players.first.bank += @bank / 2
+      @players.last.bank += @bank / 2
     else
       p "#{@players.last.name} won"
       @players.last.bank += @bank
