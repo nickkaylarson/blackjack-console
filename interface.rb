@@ -28,7 +28,7 @@ class Interface
     end
   end
 
-  def player_make_choise
+  def player_make_choice
     @prompt.select('Make a choice: ', ['Skip move', 'Add a card', 'Show cards'])
   end
 end

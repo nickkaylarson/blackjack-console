@@ -104,28 +104,26 @@ class Game
     check_bank
   end
 
+  def aks_choice
+    print_player(@players.last)
+    case @interface.player_make_choice
+    when 'Skip move'
+      dealer_move
+      calculate_points
+    when 'Add a card'
+      add_card(@players.last)
+      dealer_move
+      calculate_points
+    when 'Show cards'
+      end_game
+    end
+  end
+
   def game_loop
     clear_stats
     make_first_move
     loop do
-      if @players.last.hand.cards.size == 3 || @players.first.hand.cards.size == 3
-        end_game
-        break
-      else
-        print_player(@players.last)
-        case @interface.player_make_choise
-        when 'Skip move'
-          dealer_move
-          calculate_points
-        when 'Add a card'
-          add_card(@players.last)
-          dealer_move
-          calculate_points
-        when 'Show cards'
-          end_game
-          break
-        end
-      end
+      @players.last.hand.cards.size == 3 || @players.first.hand.cards.size == 3 ? end_game : aks_choice
     end
   end
 end
