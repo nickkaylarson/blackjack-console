@@ -9,7 +9,6 @@ class Game
 
   def initialize
     @players = []
-    @bank = 0
     @interface = Interface.new
   end
 
@@ -105,7 +104,6 @@ class Game
   end
 
   def aks_choice
-    print_player(@players.last)
     case @interface.player_make_choice
     when 'Skip move'
       dealer_move
@@ -123,7 +121,12 @@ class Game
     clear_stats
     make_first_move
     loop do
-      @players.last.hand.cards.size == 3 || @players.first.hand.cards.size == 3 ? end_game : aks_choice
+      if @players.last.hand.cards.size == 3 || @players.first.hand.cards.size == 3
+        end_game
+      else
+        print_player(@players.last)
+        aks_choice
+      end
     end
   end
 end
