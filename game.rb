@@ -48,7 +48,6 @@ class Game
   def dealer_move
     if @players.first.hand.cards.size < 3 && @players.first.hand.points <= 17
       add_card(@players.first)
-      calculate_points
     else
       @interface.print_message("#{@players.first.name} skip move")
     end
@@ -107,11 +106,9 @@ class Game
     case @interface.player_make_choice
     when 'Skip move'
       dealer_move
-      calculate_points
     when 'Add a card'
       add_card(@players.last)
       dealer_move
-      calculate_points
     when 'Show cards'
       end_game
     end
@@ -126,6 +123,7 @@ class Game
       else
         print_player(@players.last)
         aks_choice
+        calculate_points
       end
     end
   end
