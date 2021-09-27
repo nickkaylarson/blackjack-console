@@ -1,10 +1,29 @@
 # frozen_string_literal: true
 
 class Deck
-  SUIT = %w[♠ ♥ ♦ ♣].freeze
-  VALUE = (2...10).to_a + %w[Jack Queen King Ace]
+  attr_accessor :deck
 
-  def random_card
-    [SUIT.sample, VALUE.sample]
+  SUITS = %w[♠ ♥ ♦ ♣].freeze
+  VALUES = (2..10).to_a + %w[Jack Queen King Ace]
+
+  def initialize
+    @deck = []
+    generate_deck
+  end
+
+  def card
+    card = @deck.sample
+    @deck.delete(card)
+    card.split
+  end
+
+  private
+
+  def generate_deck
+    SUITS.each do |suit|
+      VALUES.each do |value|
+        @deck << "#{suit} #{value}"
+      end
+    end
   end
 end

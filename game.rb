@@ -2,6 +2,7 @@
 
 require_relative './models/player'
 require_relative './models/card'
+require_relative './models/deck'
 require_relative 'interface'
 
 class Game
@@ -38,7 +39,7 @@ class Game
   end
 
   def add_card(player)
-    player.hand.cards = Card.new
+    player.hand.cards = Card.new(@deck)
   end
 
   def dealer_move
@@ -111,6 +112,7 @@ class Game
   end
 
   def game_loop
+    @deck = Deck.new
     clear_stats
     make_first_move
     loop do
