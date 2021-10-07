@@ -21,11 +21,7 @@ class Game
   private
 
   def create_player
-    if @players.size.zero?
-      Player.new('Dealer')
-    else
-      Player.new(@interface.enter_name)
-    end
+    @players.size.zero? ? Player.new('Dealer') : Player.new(@interface.enter_name)
   end
 
   def make_bid
@@ -35,9 +31,7 @@ class Game
   end
 
   def calculate_points
-    @players.each do |player|
-      player.hand.calculate_points
-    end
+    @players.each { |player| player.hand.calculate_points }
   end
 
   def print_player(player)
@@ -53,21 +47,16 @@ class Game
   end
 
   def dealer_move
-    if @players.first.hand.cards.size < 3
-      if @players.first.hand.points <= 17
-        add_card(@players.first)
-        calculate_points
-      else
-        @interface.print_message("#{@players.first.name} skip move")
-      end
+    if @players.first.hand.cards.size < 3 && @players.first.hand.points <= 17
+      add_card(@players.first)
+      calculate_points
     else
       @interface.print_message("#{@players.first.name} skip move")
     end
   end
 
   def show_cards
-    print_player(@players.first)
-    print_player(@players.last)
+    @players.each { |player| print_player(player) }
   end
 
   def check_bank
@@ -78,19 +67,24 @@ class Game
     end
   end
 
+  def draw
+    @interface.print_message('DRAW!')
+    @players.each { |player| player.bank += @bank / 2 }
+  end
+
+  def victory(player)
+    @interface.print_message("#{player.name} won")
+    player.bank += @bank
+  end
+
   def choose_winner
     if @players.first.hand.points > @players.last.hand.points && @players.first.hand.points <= 21
-      @interface.print_message("#{@players.first.name} won")
-      @players.first.bank += @bank
+      victory(@players.first)
     elsif @players.first.hand.points == @players.last.hand.points
-      @interface.print_message('DRAW!')
-      @players.first.bank += @bank / 2
-      @players.last.bank += @bank / 2
+      draw
     else
-      @interface.print_message("#{@players.last.name} won")
-      @players.last.bank += @bank
+      victory(@players.last)
     end
-    check_bank
   end
 
   def clear_stats
@@ -107,6 +101,7 @@ class Game
   def end_game
     show_cards
     choose_winner
+    check_bank
   end
 
   def game_loop
