@@ -29,14 +29,10 @@ class Game
     @players.each { |player| player.bank -= bid }
   end
 
-  def calculate_points
-    @players.each { |player| player.hand.calculate_points }
-  end
-
   def print_player(player)
     @interface.print_message("Player name: #{player.name}")
     player.hand.cards_to_s.each { |card| @interface.print_message(card) }
-    @interface.print_message("Points: #{player.hand.points}")
+    @interface.print_message("Points: #{player.hand.calculate_points}")
     @interface.print_message("Bank: #{player.bank}")
     @interface.print_separator
   end
@@ -46,7 +42,7 @@ class Game
   end
 
   def dealer_move
-    if @players.first.hand.cards.size < 3 && @players.first.hand.points <= 17
+    if @players.first.hand.cards.size < 3 && @players.first.hand.calculate_points <= 17
       add_card(@players.first)
     else
       @interface.print_message("#{@players.first.name} skip move")
@@ -76,9 +72,10 @@ class Game
   end
 
   def choose_winner
-    if @players.first.hand.points > @players.last.hand.points && @players.first.hand.points <= 21
+    if @players.first.hand.calculate_points > @players.last.hand.calculate_points &&
+       @players.first.hand.calculate_points <= 21
       victory(@players.first)
-    elsif @players.first.hand.points == @players.last.hand.points
+    elsif @players.first.hand.calculate_points == @players.last.hand.calculate_points
       draw
     else
       victory(@players.last)
@@ -93,7 +90,6 @@ class Game
   def make_first_move
     2.times { @players.each { |player| add_card(player) } }
     make_bid
-    calculate_points
   end
 
   def end_game
@@ -123,7 +119,6 @@ class Game
       else
         print_player(@players.last)
         aks_choice
-        calculate_points
       end
     end
   end
